@@ -22,7 +22,6 @@ import com.kkensu.www.library.event.ImageMenuLayoutShowHideEvent;
 import com.kkensu.www.library.event.MoreButtonEvent;
 import com.kkensu.www.library.model.ImageModel;
 import com.kkensu.www.library.util.DownloadUtil;
-import com.kkensu.www.library.util.Util;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,7 +33,8 @@ import java.util.List;
 public class ImagePagerActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     public static final String ARG_IMAGE_MODEL_LIST = "ARG_IMAGE_MODEL_LIST";
 
-    private ImageView btn_more;
+    private ImageView btnBack;
+    private ImageView btnMore;
     private List<ImageModel> imageModelList;
     private int position;
     private PhotoViewPager viewPager;
@@ -50,7 +50,7 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
         setContentView(R.layout.activity_viewpager);
         EventBus.getDefault().register(this);
 
-           /* 상태바 색상변경 */
+        /* 상태바 색상변경 */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(android.R.color.black));
         }
@@ -59,18 +59,19 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
         imageModelList = (List<ImageModel>) intent.getSerializableExtra(ARG_IMAGE_MODEL_LIST);
         position = intent.getExtras().getInt("POSITION");
 
-        btn_more = Util.findView(this, R.id.btnMore);
-        Util.onClick(this, new int[]{R.id.btnBack, R.id.btnMore}, new OnClickListener() {
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                int i = v.getId();
-                if (i == R.id.btnBack) {
-                    finish();
+                finish();
+            }
+        });
 
-                } else if (i == R.id.btnMore) {
-                    popupMenu();
-
-                }
+        btnMore = findViewById(R.id.btnMore);
+        btnMore.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupMenu();
             }
         });
 
@@ -113,7 +114,7 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
     }
 
     private void popupMenu() {
-        PopupMenu popupMenu = new PopupMenu(this, btn_more);
+        PopupMenu popupMenu = new PopupMenu(this, btnMore);
         getMenuInflater().inflate(R.menu.imageview_more_menu, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
