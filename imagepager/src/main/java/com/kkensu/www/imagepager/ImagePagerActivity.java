@@ -23,10 +23,6 @@ import com.kkensu.www.imagepager.event.MoreButtonEvent;
 import com.kkensu.www.imagepager.model.ImageModel;
 import com.kkensu.www.imagepager.util.DownloadUtil;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 
 
@@ -48,7 +44,6 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewpager);
-        EventBus.getDefault().register(this);
 
         /* 상태바 색상변경 */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -87,7 +82,6 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
         layout_circle = findViewById(R.id.layoutCircle);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void showHideMenuLayout(ImageMenuLayoutShowHideEvent event) {
         if (layout_top.getVisibility() == View.GONE) {
             Animation showAnim = new AlphaAnimation(0, 1);
@@ -102,7 +96,6 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void showPopupMenu(MoreButtonEvent moreButtonEvent) {
         if (layout_top.getVisibility() == View.GONE) {
             Animation showAnim = new AlphaAnimation(0, 1);

@@ -19,11 +19,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.kkensu.www.imagepager.R;
-import com.kkensu.www.imagepager.event.ImageMenuLayoutShowHideEvent;
-import com.kkensu.www.imagepager.event.MoreButtonEvent;
 import com.kkensu.www.imagepager.model.ImageModel;
-
-import org.greenrobot.eventbus.EventBus;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -96,7 +92,7 @@ public class PhotoViewFragment extends Fragment {
                             mAttacher.setOnLongClickListener(new View.OnLongClickListener() {
                                 @Override
                                 public boolean onLongClick(View v) {
-                                    EventBus.getDefault().post(new MoreButtonEvent());
+//                                    EventBus.getDefault().post(new MoreButtonEvent());
                                     return false;
                                 }
                             });
@@ -104,7 +100,7 @@ public class PhotoViewFragment extends Fragment {
                             mAttacher.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
                                 @Override
                                 public void onPhotoTap(View view, float x, float y) {
-                                    EventBus.getDefault().post(new ImageMenuLayoutShowHideEvent());
+//                                    EventBus.getDefault().post(new ImageMenuLayoutShowHideEvent());
                                 }
 
                                 @Override
