@@ -12,7 +12,7 @@
         android:name="android.hardware.telephony"
         android:required="false" />
 
-    <application
+    <applicationA
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,6 +28,6 @@
         </activity>
         <!--<activity android:name="com.kkensu.www.library.ImagePagerActivity">-->
         <!--</activity>-->
-    </application>
+    </applicationA>
 
 </manifest>

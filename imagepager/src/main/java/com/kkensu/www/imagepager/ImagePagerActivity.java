@@ -20,7 +20,7 @@ import android.widget.ToggleButton;
 import com.kkensu.www.imagepager.adapter.ImagePageAdapter;
 import com.kkensu.www.imagepager.event.ImageMenuLayoutShowHideEvent;
 import com.kkensu.www.imagepager.event.MoreButtonEvent;
-import com.kkensu.www.imagepager.model.ImageModel;
+import com.kkensu.www.imagepager.model.ImageInfo;
 import com.kkensu.www.imagepager.util.DownloadUtil;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
 
     private ImageView btnBack;
     private ImageView btnMore;
-    private List<ImageModel> imageModelList;
+    private List<ImageInfo> imageInfoList;
     private int position;
     private PhotoViewPager viewPager;
     private ImagePageAdapter imagePageAdapter;
@@ -51,7 +51,7 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
         }
 
         Intent intent = getIntent();
-        imageModelList = (List<ImageModel>) intent.getSerializableExtra(ARG_IMAGE_MODEL_LIST);
+        imageInfoList = (List<ImageInfo>) intent.getSerializableExtra(ARG_IMAGE_MODEL_LIST);
         position = intent.getExtras().getInt("POSITION");
 
         btnBack = findViewById(R.id.btnBack);
@@ -73,7 +73,7 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
 //        setToggleButton(imageModelRetro.getList().size());
 
         viewPager = findViewById(R.id.viewPager);
-        imagePageAdapter = new ImagePageAdapter(getSupportFragmentManager(), imageModelList);
+        imagePageAdapter = new ImagePageAdapter(getSupportFragmentManager(), imageInfoList);
         viewPager.setAdapter(imagePageAdapter);
         viewPager.setOnPageChangeListener(this);
         viewPager.setCurrentItem(position);
@@ -114,7 +114,7 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.btnSave) {
-                    DownloadUtil.downloadData(ImagePagerActivity.this, imageModelList.get(viewPager.getCurrentItem()).getImgUrl());
+                    DownloadUtil.downloadData(ImagePagerActivity.this, imageInfoList.get(viewPager.getCurrentItem()).getImgUrl());
 
                 }
                 return false;

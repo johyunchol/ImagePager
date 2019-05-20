@@ -1,4 +1,4 @@
-package com.kkensu.www.imagepager.adapter;
+package com.kkensu.www.sample;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,9 +16,8 @@ import java.util.List;
  */
 public class ImagePageAdapter extends FragmentStatePagerAdapter {
 
-//    private ImageModelRetro imageModelRetro;
     private List<ImageInfo> imageInfoList;
-    private PhotoViewFragment fragment;
+    private Fragment fragment;
     private int size;
 
     public ImagePageAdapter(FragmentManager fm, List<ImageInfo> imageInfoList) {
@@ -29,18 +28,12 @@ public class ImagePageAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        fragment = new PhotoViewFragment().newInstance(imageInfoList.get(position));
+        fragment = new ImageFragment().newInstance(imageInfoList, position);
         return fragment;
     }
 
-//    @Override
-//    public Fragment getItem(int position) {
-//        return FavoritesFragment.newInstance(position);
-//    }
-
     @Override
     public int getCount() {
-//        return Integer.MAX_VALUE;
         return imageInfoList.size();
     }
 
@@ -48,7 +41,7 @@ public class ImagePageAdapter extends FragmentStatePagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         super.destroyItem(container, position, object);
         if (object instanceof android.app.Fragment) {
-            fragment = (PhotoViewFragment) object;
+            fragment = (Fragment) object;
             FragmentManager fragmentManager = fragment.getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(fragment);

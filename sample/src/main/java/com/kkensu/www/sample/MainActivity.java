@@ -8,8 +8,7 @@ import android.widget.Button;
 
 import com.kkensu.www.imagepager.ImagePagerActivity;
 import com.kkensu.www.imagepager.PhotoViewPager;
-import com.kkensu.www.imagepager.adapter.ImagePageAdapter;
-import com.kkensu.www.imagepager.model.ImageModel;
+import com.kkensu.www.imagepager.model.ImageInfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private List<ImageModel> imageModelList;
+    private List<ImageInfo> imageInfoList;
     private Button button;
     private PhotoViewPager viewPager;
     private ImagePageAdapter imagePageAdapter;
@@ -31,17 +30,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initResources() {
-        imageModelList = new ArrayList<>();
+        imageInfoList = new ArrayList<>();
         setItems();
 
         viewPager = findViewById(R.id.viewPager);
-        imagePageAdapter = new ImagePageAdapter(getSupportFragmentManager(), imageModelList);
+        imagePageAdapter = new ImagePageAdapter(getSupportFragmentManager(), imageInfoList);
         viewPager.setAdapter(imagePageAdapter);
         viewPager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ImagePagerActivity.class);
-                intent.putExtra(ImagePagerActivity.ARG_IMAGE_MODEL_LIST, (Serializable) imageModelList);
+                intent.putExtra(ImagePagerActivity.ARG_IMAGE_MODEL_LIST, (Serializable) imageInfoList);
                 startActivity(intent);
             }
         });
@@ -53,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setItem(String imageUrl) {
-        ImageModel imageModel = new ImageModel();
-        imageModel.setImgUrl(imageUrl);
-        imageModelList.add(imageModel);
+        ImageInfo imageInfo = new ImageInfo();
+        imageInfo.setImgUrl(imageUrl);
+        imageInfoList.add(imageInfo);
     }
 }

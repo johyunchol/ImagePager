@@ -1,5 +1,6 @@
-package com.kkensu.www.imagepager.fragment;
+package com.kkensu.www.sample;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,43 +13,39 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.kkensu.www.imagepager.ImagePagerActivity;
 import com.kkensu.www.imagepager.R;
 import com.kkensu.www.imagepager.model.ImageInfo;
 
+import java.io.Serializable;
+import java.util.List;
+
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-public class PhotoViewFragment extends Fragment {
-    private ImageInfo imageInfo;
+public class ImageFragment extends Fragment {
+    private List<ImageInfo> imageInfoList;
+    private int position;
+
     private ImageView imageView;
     private ProgressBar progressBar;
 
     private PhotoViewAttacher mAttacher;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-//    private String mParam1;
-//    private String mParam2;
-
-    //private OnFragmentInteractionListener mListener;
-    public PhotoViewFragment() {
+    public ImageFragment() {
         // Required empty public constructor
     }
 
     // TODO: Rename and change types and number of parameters
-    public static PhotoViewFragment newInstance(ImageInfo imageInfo) {
-        PhotoViewFragment fragment = new PhotoViewFragment();
+    public static ImageFragment newInstance(List<ImageInfo> imageInfoList, int position) {
+        ImageFragment fragment = new ImageFragment();
         Bundle args = new Bundle();
-        args.putSerializable("MAIN", imageInfo);
+        args.putSerializable("MAIN", (Serializable) imageInfoList);
+        args.putInt("POSITION", position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,7 +54,8 @@ public class PhotoViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            imageInfo = (ImageInfo) getArguments().getSerializable("MAIN");
+            imageInfoList = (List<ImageInfo>) getArguments().getSerializable("MAIN");
+            position = getArguments().getInt("POSITION");
         }
     }
 
@@ -72,7 +70,7 @@ public class PhotoViewFragment extends Fragment {
         RequestOptions options = new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(this)
-                .load(imageInfo.getImgUrl())
+                .load(imageInfoList.get(position).getImgUrl())
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -81,7 +79,7 @@ public class PhotoViewFragment extends Fragment {
                     }
 
                     @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, com.bumptech.glide.load.DataSource dataSource, boolean isFirstResource) {
                         progressBar.setVisibility(View.GONE);
                         if (mAttacher != null) {
                             mAttacher.update();
@@ -100,7 +98,9 @@ public class PhotoViewFragment extends Fragment {
                             mAttacher.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
                                 @Override
                                 public void onPhotoTap(View view, float x, float y) {
-//                                    EventBus.getDefault().post(new ImageMenuLayoutShowHideEvent());
+                                    Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
+                                    intent.putExtra(ImagePagerActivity.ARG_IMAGE_MODEL_LIST, (Serializable) imageInfoList);
+                                    startActivity(intent);
                                 }
 
                                 @Override
@@ -116,49 +116,5 @@ public class PhotoViewFragment extends Fragment {
                 .into(imageView);
 
         return view;
-    }
-
-
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-    public ImageView getImageView() {
-        return imageView;
     }
 }

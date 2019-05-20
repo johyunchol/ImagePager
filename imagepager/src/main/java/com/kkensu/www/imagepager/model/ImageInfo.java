@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by JoHyunChol on 2016-10-15.
  */
 
-public class ImageModel implements Serializable {
+public class ImageInfo implements Serializable {
     String img_url;
 
     public String getImgUrl() {
