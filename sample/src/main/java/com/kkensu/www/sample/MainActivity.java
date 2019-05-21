@@ -2,13 +2,17 @@ package com.kkensu.www.sample;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.widget.Button;
 
 import com.kkensu.www.imagepager.ImagePagerActivity;
 import com.kkensu.www.imagepager.PhotoViewPager;
 import com.kkensu.www.imagepager.model.ImageInfo;
+import com.kkensu.www.imagepager.util.BundleBuilder;
+import com.kkensu.www.imagepager.util.Util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,9 +43,17 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ImagePagerActivity.class);
-                intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageInfoList);
-                startActivity(intent);
+                Util.newActivity(MainActivity.this, ImagePagerActivity.class)
+                        .arg(new BundleBuilder()
+                                .put(ImagePagerActivity.ARG_POSITION, 100)
+                                .put(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageInfoList)
+                                .put(ImagePagerActivity.ARG_CLOSE_TYPE, ImagePagerActivity.CloseType.TYPE_CLOSE.getValue())
+                        )
+                        .start();
+//                Intent intent = new Intent(MainActivity.this, ImagePagerActivity.class);
+//                intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageInfoList);
+//                intent.putExtra(ImagePagerActivity.ARG_CLOSE_TYPE, ImagePagerActivity.CloseType.TYPE_CLOSE.getValue());
+//                startActivity(intent);
             }
         });
     }

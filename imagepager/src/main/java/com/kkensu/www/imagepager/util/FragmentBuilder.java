@@ -1,7 +1,7 @@
 package com.kkensu.www.imagepager.util;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 /**
  * Fragment 쉽게 만들기 위한 Builder 패턴

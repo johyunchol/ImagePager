@@ -2,7 +2,10 @@ package com.kkensu.www.imagepager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
+
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,23 +19,25 @@ import android.widget.PopupMenu;
 import android.widget.ToggleButton;
 
 import com.kkensu.www.imagepager.adapter.ImagePageAdapter;
-import com.kkensu.www.imagepager.base.BaseActivity;
 import com.kkensu.www.imagepager.event.ImageMenuLayoutShowHideEvent;
 import com.kkensu.www.imagepager.event.MoreButtonEvent;
 import com.kkensu.www.imagepager.model.ImageInfo;
 import com.kkensu.www.imagepager.util.DownloadUtil;
 import com.kkensu.www.imagepager.util.Util;
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public class ImagePagerActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
+public class ImagePagerActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, OnClickListener {
     public static final String ARG_IMAGE_LIST = "ARG_IMAGE_LIST";
     public static final String ARG_POSITION = "ARG_POSITION";
+    public static final String ARG_CLOSE_TYPE = "ARG_CLOSE_TYPE";
 
+    private AppCompatActivity activity;
     private ViewGroup container;
 
-    private ImageView btnBack;
+    private ImageView btnClose;
     private ImageView btnMore;
     private List<ImageInfo> imageInfoList;
     private int position;
@@ -42,19 +47,20 @@ public class ImagePagerActivity extends BaseActivity implements ViewPager.OnPage
 
     private ViewGroup layout_top, layout_circle;
 
+    private CloseType closeType = CloseType.TYPE_BACK;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
+        activity = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewpager);
 
         initData();
         initResources();
 
-        btnBack = findViewById(R.id.btnBack);
-        btnMore = findViewById(R.id.btnMore);
 
-//        setToggleButton(imageModelRetro.getList().size());
+        setToggleButton(imageInfoList.size());
 
         viewPager = findViewById(R.id.viewPager);
         imagePageAdapter = new ImagePageAdapter(getSupportFragmentManager(), imageInfoList);
@@ -75,20 +81,40 @@ public class ImagePagerActivity extends BaseActivity implements ViewPager.OnPage
         if (Util.hasArg(activity, ARG_POSITION)) {
             position = Util.getIntegerArg(activity, ARG_POSITION);
         }
+
+        if (Util.hasArg(activity, ARG_CLOSE_TYPE)) {
+            closeType = CloseType.fromValue(Util.getIntegerArg(activity, ARG_CLOSE_TYPE));
+        }
     }
 
     private void initResources() {
-        Util.onClick(activity, new int[]{R.id.btnBack, R.id.btnMore}, new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int i = v.getId();
-                if (i == R.id.btnBack) {
-                    finish();
-                } else if (i == R.id.btnMore) {
-                    popupMenu();
-                }
-            }
-        });
+        initClose();
+
+        findViewById(R.id.btnClose).setOnClickListener(this);
+        findViewById(R.id.btnMore).setOnClickListener(this);
+//        Util.onClick(activity, new int[]{R.id.btnBack, R.id.btnMore}, new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                int i = v.getId();
+//                if (i == R.id.btnBack) {
+//                    finish();
+//                } else if (i == R.id.btnMore) {
+//                    popupMenu();
+//                }
+//            }
+//        });
+    }
+
+    private void initClose() {
+        switch (closeType) {
+            case TYPE_BACK:
+                ((ImageView) findViewById(R.id.btnClose)).setImageResource(R.drawable.common_btn_left_white);
+                break;
+
+            case TYPE_CLOSE:
+                ((ImageView) findViewById(R.id.btnClose)).setImageResource(R.drawable.common_btn_close_white);
+                break;
+        }
     }
 
     public void showHideMenuLayout(ImageMenuLayoutShowHideEvent event) {
@@ -189,6 +215,15 @@ public class ImagePagerActivity extends BaseActivity implements ViewPager.OnPage
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+
+        if (id == R.id.btnClose) {
+            finish();
+        }
     }
 
 //    public abstract static class BaseBuilder<T extends BaseBuilder> {
@@ -456,4 +491,28 @@ public class ImagePagerActivity extends BaseActivity implements ViewPager.OnPage
 //    public void show() {
 //        startActivity(new Intent(this, ImagePagerActivity.class));
 //    }
+
+    public enum CloseType implements Serializable {
+        TYPE_BACK(1),
+        TYPE_CLOSE(2);
+
+        public int value;
+
+        CloseType(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
+
+        public static CloseType fromValue(int value) {
+            for (CloseType state : CloseType.values()) {
+                if (state.value == value) {
+                    return state;
+                }
+            }
+            return TYPE_BACK;
+        }
+    }
 }
