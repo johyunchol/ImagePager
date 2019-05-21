@@ -2,7 +2,6 @@ package com.kkensu.www.sample;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -99,7 +98,7 @@ public class ImageFragment extends Fragment {
                                 @Override
                                 public void onPhotoTap(View view, float x, float y) {
                                     Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
-                                    intent.putExtra(ImagePagerActivity.ARG_IMAGE_MODEL_LIST, (Serializable) imageInfoList);
+                                    intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageInfoList);
                                     startActivity(intent);
                                 }
 

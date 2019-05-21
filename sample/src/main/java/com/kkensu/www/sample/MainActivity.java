@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ImagePagerActivity.class);
-                intent.putExtra(ImagePagerActivity.ARG_IMAGE_MODEL_LIST, (Serializable) imageInfoList);
+                intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageInfoList);
                 startActivity(intent);
             }
         });

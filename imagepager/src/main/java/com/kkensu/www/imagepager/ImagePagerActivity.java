@@ -1,10 +1,8 @@
 package com.kkensu.www.imagepager;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,16 +16,21 @@ import android.widget.PopupMenu;
 import android.widget.ToggleButton;
 
 import com.kkensu.www.imagepager.adapter.ImagePageAdapter;
+import com.kkensu.www.imagepager.base.BaseActivity;
 import com.kkensu.www.imagepager.event.ImageMenuLayoutShowHideEvent;
 import com.kkensu.www.imagepager.event.MoreButtonEvent;
 import com.kkensu.www.imagepager.model.ImageInfo;
 import com.kkensu.www.imagepager.util.DownloadUtil;
+import com.kkensu.www.imagepager.util.Util;
 
 import java.util.List;
 
 
-public class ImagePagerActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
-    public static final String ARG_IMAGE_MODEL_LIST = "ARG_IMAGE_MODEL_LIST";
+public class ImagePagerActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
+    public static final String ARG_IMAGE_LIST = "ARG_IMAGE_LIST";
+    public static final String ARG_POSITION = "ARG_POSITION";
+
+    private ViewGroup container;
 
     private ImageView btnBack;
     private ImageView btnMore;
@@ -45,30 +48,11 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewpager);
 
-        /* 상태바 색상변경 */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(android.R.color.black));
-        }
-
-        Intent intent = getIntent();
-        imageInfoList = (List<ImageInfo>) intent.getSerializableExtra(ARG_IMAGE_MODEL_LIST);
-        position = intent.getExtras().getInt("POSITION");
+        initData();
+        initResources();
 
         btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
         btnMore = findViewById(R.id.btnMore);
-        btnMore.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupMenu();
-            }
-        });
 
 //        setToggleButton(imageModelRetro.getList().size());
 
@@ -80,6 +64,31 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
 
         layout_top = findViewById(R.id.layoutTop);
         layout_circle = findViewById(R.id.layoutCircle);
+    }
+
+
+    private void initData() {
+        if (Util.hasArg(activity, ARG_IMAGE_LIST)) {
+            imageInfoList = Util.getSerializableArg(activity, ARG_IMAGE_LIST);
+        }
+
+        if (Util.hasArg(activity, ARG_POSITION)) {
+            position = Util.getIntegerArg(activity, ARG_POSITION);
+        }
+    }
+
+    private void initResources() {
+        Util.onClick(activity, new int[]{R.id.btnBack, R.id.btnMore}, new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int i = v.getId();
+                if (i == R.id.btnBack) {
+                    finish();
+                } else if (i == R.id.btnMore) {
+                    popupMenu();
+                }
+            }
+        });
     }
 
     public void showHideMenuLayout(ImageMenuLayoutShowHideEvent event) {
@@ -181,4 +190,270 @@ public class ImagePagerActivity extends AppCompatActivity implements ViewPager.O
     public void onPageScrollStateChanged(int state) {
 
     }
+
+//    public abstract static class BaseBuilder<T extends BaseBuilder> {
+//
+//        public int previewMaxCount = 25;
+//        public Drawable cameraTileDrawable;
+//        public Drawable galleryTileDrawable;
+//        public Drawable selectedForegroundDrawable;
+//        public ImageProvider imageProvider;
+//        public boolean showCamera = true;
+//        public boolean showGallery = true;
+//        public int cameraTileBackgroundResId = R.color.tedbottompicker_camera;
+//        public int galleryTileBackgroundResId = R.color.tedbottompicker_gallery;
+//        @MediaType
+//        public int mediaType = MediaType.IMAGE;
+//        protected BaseActivity activity;
+//        OnImageSelectedListener onImageSelectedListener;
+//        OnMultiImageSelectedListener onMultiImageSelectedListener;
+//        OnErrorListener onErrorListener;
+//        private String title;
+//        private boolean showTitle = true;
+//        private List<Uri> selectedUriList;
+//        private Uri selectedUri;
+//        private Drawable deSelectIconDrawable;
+//        private int spacing = 1;
+//        private boolean includeEdgeSpacing = false;
+//        private int peekHeight = -1;
+//        private int titleBackgroundResId;
+//        private int selectMaxCount = Integer.MAX_VALUE;
+//        private int selectMinCount = 0;
+//        private String completeButtonText;
+//        private String emptySelectionText;
+//        private String selectMaxCountErrorText;
+//        private String selectMinCountErrorText;
+//
+//        public BaseBuilder(@NonNull FragmentActivity fragmentActivity) {
+//
+//            this.fragmentActivity = fragmentActivity;
+//
+//            setCameraTile(R.drawable.ic_camera);
+//            setGalleryTile(R.drawable.ic_gallery);
+//            setSpacingResId(R.dimen.tedbottompicker_grid_layout_margin);
+//        }
+//
+//        public T setCameraTile(@DrawableRes int cameraTileResId) {
+//            setCameraTile(ContextCompat.getDrawable(fragmentActivity, cameraTileResId));
+//            return (T) this;
+//        }
+//
+//        public BaseBuilder<T> setGalleryTile(@DrawableRes int galleryTileResId) {
+//            setGalleryTile(ContextCompat.getDrawable(fragmentActivity, galleryTileResId));
+//            return this;
+//        }
+//
+//        public T setSpacingResId(@DimenRes int dimenResId) {
+//            this.spacing = fragmentActivity.getResources().getDimensionPixelSize(dimenResId);
+//            return (T) this;
+//        }
+//
+//        public T setCameraTile(Drawable cameraTileDrawable) {
+//            this.cameraTileDrawable = cameraTileDrawable;
+//            return (T) this;
+//        }
+//
+//        public T setGalleryTile(Drawable galleryTileDrawable) {
+//            this.galleryTileDrawable = galleryTileDrawable;
+//            return (T) this;
+//        }
+//
+//        public T setDeSelectIcon(@DrawableRes int deSelectIconResId) {
+//            setDeSelectIcon(ContextCompat.getDrawable(fragmentActivity, deSelectIconResId));
+//            return (T) this;
+//        }
+//
+//        public T setDeSelectIcon(Drawable deSelectIconDrawable) {
+//            this.deSelectIconDrawable = deSelectIconDrawable;
+//            return (T) this;
+//        }
+//
+//        public T setSelectedForeground(@DrawableRes int selectedForegroundResId) {
+//            setSelectedForeground(ContextCompat.getDrawable(fragmentActivity, selectedForegroundResId));
+//            return (T) this;
+//        }
+//
+//        public T setSelectedForeground(Drawable selectedForegroundDrawable) {
+//            this.selectedForegroundDrawable = selectedForegroundDrawable;
+//            return (T) this;
+//        }
+//
+//        public T setPreviewMaxCount(int previewMaxCount) {
+//            this.previewMaxCount = previewMaxCount;
+//            return (T) this;
+//        }
+//
+//        public T setSelectMaxCount(int selectMaxCount) {
+//            this.selectMaxCount = selectMaxCount;
+//            return (T) this;
+//        }
+//
+//        public T setSelectMinCount(int selectMinCount) {
+//            this.selectMinCount = selectMinCount;
+//            return (T) this;
+//        }
+//
+//        public T setOnImageSelectedListener(OnImageSelectedListener onImageSelectedListener) {
+//            this.onImageSelectedListener = onImageSelectedListener;
+//            return (T) this;
+//        }
+//
+//        public T setOnMultiImageSelectedListener(OnMultiImageSelectedListener onMultiImageSelectedListener) {
+//            this.onMultiImageSelectedListener = onMultiImageSelectedListener;
+//            return (T) this;
+//        }
+//
+//        public T setOnErrorListener(OnErrorListener onErrorListener) {
+//            this.onErrorListener = onErrorListener;
+//            return (T) this;
+//        }
+//
+//        public T showCameraTile(boolean showCamera) {
+//            this.showCamera = showCamera;
+//            return (T) this;
+//        }
+//
+//        public T showGalleryTile(boolean showGallery) {
+//            this.showGallery = showGallery;
+//            return (T) this;
+//        }
+//
+//        public T setSpacing(int spacing) {
+//            this.spacing = spacing;
+//            return (T) this;
+//        }
+//
+//        public T setIncludeEdgeSpacing(boolean includeEdgeSpacing) {
+//            this.includeEdgeSpacing = includeEdgeSpacing;
+//            return (T) this;
+//        }
+//
+//        public T setPeekHeight(int peekHeight) {
+//            this.peekHeight = peekHeight;
+//            return (T) this;
+//        }
+//
+//        public T setPeekHeightResId(@DimenRes int dimenResId) {
+//            this.peekHeight = fragmentActivity.getResources().getDimensionPixelSize(dimenResId);
+//            return (T) this;
+//        }
+//
+//        public T setCameraTileBackgroundResId(@ColorRes int colorResId) {
+//            this.cameraTileBackgroundResId = colorResId;
+//            return (T) this;
+//        }
+//
+//        public T setGalleryTileBackgroundResId(@ColorRes int colorResId) {
+//            this.galleryTileBackgroundResId = colorResId;
+//            return (T) this;
+//        }
+//
+//        public T setTitle(String title) {
+//            this.title = title;
+//            return (T) this;
+//        }
+//
+//        public T setTitle(@StringRes int stringResId) {
+//            this.title = fragmentActivity.getResources().getString(stringResId);
+//            return (T) this;
+//        }
+//
+//        public T showTitle(boolean showTitle) {
+//            this.showTitle = showTitle;
+//            return (T) this;
+//        }
+//
+//        public T setCompleteButtonText(String completeButtonText) {
+//            this.completeButtonText = completeButtonText;
+//            return (T) this;
+//        }
+//
+//        public T setCompleteButtonText(@StringRes int completeButtonResId) {
+//            this.completeButtonText = fragmentActivity.getResources().getString(completeButtonResId);
+//            return (T) this;
+//        }
+//
+//        public T setEmptySelectionText(String emptySelectionText) {
+//            this.emptySelectionText = emptySelectionText;
+//            return (T) this;
+//        }
+//
+//        public T setEmptySelectionText(@StringRes int emptySelectionResId) {
+//            this.emptySelectionText = fragmentActivity.getResources().getString(emptySelectionResId);
+//            return (T) this;
+//        }
+//
+//        public T setSelectMaxCountErrorText(String selectMaxCountErrorText) {
+//            this.selectMaxCountErrorText = selectMaxCountErrorText;
+//            return (T) this;
+//        }
+//
+//        public T setSelectMaxCountErrorText(@StringRes int selectMaxCountErrorResId) {
+//            this.selectMaxCountErrorText = fragmentActivity.getResources().getString(selectMaxCountErrorResId);
+//            return (T) this;
+//        }
+//
+//        public T setSelectMinCountErrorText(String selectMinCountErrorText) {
+//            this.selectMinCountErrorText = selectMinCountErrorText;
+//            return (T) this;
+//        }
+//
+//        public T setSelectMinCountErrorText(@StringRes int selectMinCountErrorResId) {
+//            this.selectMinCountErrorText = fragmentActivity.getResources().getString(selectMinCountErrorResId);
+//            return (T) this;
+//        }
+//
+//        public T setTitleBackgroundResId(@ColorRes int colorResId) {
+//            this.titleBackgroundResId = colorResId;
+//            return (T) this;
+//        }
+//
+//        public T setImageProvider(ImageProvider imageProvider) {
+//            this.imageProvider = imageProvider;
+//            return (T) this;
+//        }
+//
+//        public T setSelectedUriList(List<Uri> selectedUriList) {
+//            this.selectedUriList = selectedUriList;
+//            return (T) this;
+//        }
+//
+//        public T setSelectedUri(Uri selectedUri) {
+//            this.selectedUri = selectedUri;
+//            return (T) this;
+//        }
+//
+//        public T showVideoMedia() {
+//            this.mediaType = MediaType.VIDEO;
+//            return (T) this;
+//        }
+//
+//        public TedBottomSheetDialogFragment create() {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
+//                    && ContextCompat.checkSelfPermission(fragmentActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                throw new RuntimeException("Missing required WRITE_EXTERNAL_STORAGE permission. Did you remember to request it first?");
+//            }
+//
+//            if (onImageSelectedListener == null && onMultiImageSelectedListener == null) {
+//                throw new RuntimeException("You have to use setOnImageSelectedListener() or setOnMultiImageSelectedListener() for receive selected Uri");
+//            }
+//
+//            TedBottomSheetDialogFragment customBottomSheetDialogFragment = new TedBottomSheetDialogFragment();
+//            customBottomSheetDialogFragment.builder = (T) this;
+//            return customBottomSheetDialogFragment;
+//        }
+//
+//        @Retention(RetentionPolicy.SOURCE)
+//        @IntDef({MediaType.IMAGE, MediaType.VIDEO})
+//        public @interface MediaType {
+//            int IMAGE = 1;
+//            int VIDEO = 2;
+//        }
+//
+//
+//    }
+//
+//    public void show() {
+//        startActivity(new Intent(this, ImagePagerActivity.class));
+//    }
 }
