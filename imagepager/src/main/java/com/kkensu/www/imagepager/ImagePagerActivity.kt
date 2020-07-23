@@ -1,46 +1,82 @@
 package com.kkensu.www.imagepager
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.DisplayMetrics
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.kkensu.www.imagepager.adapter.ImageListAdapter
 import com.kkensu.www.imagepager.adapter.ImagePageAdapter
+import com.kkensu.www.imagepager.event.PageEvent
 import com.kkensu.www.imagepager.model.ImageData
 import kotlinx.android.synthetic.main.activity_viewpager.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import kotlin.math.roundToInt
 
 class ImagePagerActivity : AppCompatActivity() {
     companion object {
-        const val ARG_POSITION = "ARG_POSITION"
         const val ARG_IMAGE_LIST = "ARG_IMAGE_LIST"
+        const val ARG_THUMBNAIL_LIST = "ARG_THUMBNAIL_LIST"
         const val ARG_CLOSE_TYPE = "ARG_CLOSE_TYPE"
+        const val ARG_TITLE = "ARG_TITLE"
+        const val ARG_POSITION = "ARG_POSITION"
+        const val ARG_IS_SHOW_MORE = "ARG_IS_SHOW_MORE"
+        const val ARG_IS_SHOW_POSITION = "ARG_IS_SHOW_POSITION"
+        const val ARG_IS_SHOW_BOTTOM_VIEW = "ARG_IS_SHOW_BOTTOM_VIEW"
     }
 
-    var activity: AppCompatActivity? = null
+    private var activity: AppCompatActivity? = null
 
     private var position = 0
     private var closeType: CloseType? = null
     private var toggleButtons: Array<ToggleButton?>? = null
 
+    private var title: String? = null
+    private var isShowPosition = false
+    private var isShowBottomView = false
+
+    private var imageListAdapter: ImageListAdapter? = null
     private var imageList: MutableList<ImageData>? = null
+    private var thumbnailList: MutableList<ImageData>? = null
     private var viewPager: ViewPager2? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity = this
+        EventBus.getDefault().register(this)
         setContentView(R.layout.activity_viewpager)
 
         initData()
         initResources()
     }
 
+    override fun onDestroy() {
+        EventBus.getDefault().unregister(this)
+        super.onDestroy()
+    }
+
     private fun initData() {
         imageList = intent.getSerializableExtra(ARG_IMAGE_LIST) as ArrayList<ImageData>
+        try {
+            thumbnailList = intent.getSerializableExtra(ARG_THUMBNAIL_LIST) as ArrayList<ImageData>
+        } catch (e: Exception) {
+            if (thumbnailList == null || thumbnailList?.size == 0) {
+                thumbnailList = imageList
+            }
+        }
+
         position = intent.getIntExtra(ARG_POSITION, 0)
+        title = intent.getStringExtra(ARG_TITLE)
+        isShowPosition = intent.getBooleanExtra(ARG_IS_SHOW_POSITION, false)
+        isShowBottomView = intent.getBooleanExtra(ARG_IS_SHOW_BOTTOM_VIEW, false)
         closeType = CloseType.fromValue(intent.getIntExtra(ARG_CLOSE_TYPE, 0))
     }
 
@@ -53,17 +89,57 @@ class ImagePagerActivity : AppCompatActivity() {
 
         setToggleButton(imageList!!.size)
 
+        txtTitle.text = title
+        setTextPageNo(1)
+        txtPosition.visibility = if (isShowPosition) View.VISIBLE else View.GONE
+
         viewPager = findViewById<ViewPager2>(R.id.viewPager)
         viewPager?.adapter = ImagePageAdapter(imageList!!)
         viewPager?.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         viewPager?.currentItem = position
-        viewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {})
+        viewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                Handler().postDelayed({
+                    recyclerView.layoutManager!!.smoothScrollToPosition(recyclerView, RecyclerView.State(), (position * 2))
+                }, 200)
+
+                setTextPageNo(position + 1)
+
+                allUnSelect()
+                imageList?.get(position)?.isSelected = true
+                imageListAdapter?.setItem(imageList)
+            }
+        })
+
+        if (isShowBottomView) {
+            recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            imageListAdapter = ImageListAdapter(this)
+            imageListAdapter?.setItem(imageList)
+            recyclerView.adapter = imageListAdapter
+            recyclerView.visibility = View.VISIBLE
+        } else {
+            recyclerView.visibility = View.GONE
+        }
+
+        recyclerView.visibility = if (isShowBottomView) View.VISIBLE else View.GONE
+    }
+
+    private fun allUnSelect() {
+        for (image in this.imageList!!) {
+            image.isSelected = false
+        }
+    }
+
+    private fun setTextPageNo(curNo: Int) {
+        txtPosition.text = String.format("%d / %d", curNo, imageList?.size)
     }
 
     private fun initClose() {
         when (closeType) {
-            CloseType.TYPE_BACK -> btnClose.setImageResource(R.drawable.common_btn_left_white)
-            CloseType.TYPE_CLOSE -> btnClose.setImageResource(R.drawable.common_btn_close_white)
+            CloseType.TYPE_BACK -> btnClose.setImageResource(R.drawable.ic_back_black)
+            CloseType.TYPE_CLOSE -> btnClose.setImageResource(R.drawable.ic_nav_close_black)
         }
     }
 
@@ -107,6 +183,16 @@ class ImagePagerActivity : AppCompatActivity() {
                 return TYPE_BACK
             }
         }
+    }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun setViewPager(event: PageEvent) {
+        for (i in imageList?.indices!!) {
+            val imageData: ImageData = imageList?.get(i)!!
+            if (imageData.image?.equals(event.imageData.image)!!) {
+                viewPager!!.currentItem = i
+                break
+            }
+        }
     }
 }

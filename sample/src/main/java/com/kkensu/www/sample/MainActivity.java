@@ -1,5 +1,6 @@
 package com.kkensu.www.sample;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,18 +39,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         imagePageAdapter = new ImagePageAdapter(getSupportFragmentManager(), imageInfoList);
         viewPager.setAdapter(imagePageAdapter);
-        viewPager.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.newActivity(MainActivity.this, ImagePagerActivity.class)
-                        .arg(new BundleBuilder()
-                                .put(ImagePagerActivity.ARG_POSITION, 100)
-                                .put(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageInfoList)
-                                .put(ImagePagerActivity.ARG_CLOSE_TYPE, ImagePagerActivity.CloseType.TYPE_CLOSE.getValue())
-                        )
-                        .start();
-            }
-        });
     }
 
     private void setItems() {

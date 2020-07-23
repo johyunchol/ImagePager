@@ -68,7 +68,12 @@ public class ImageFragment extends Fragment {
             @Override
             public void onPhotoTap(ImageView view, float x, float y) {
                 Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
+                intent.putExtra(ImagePagerActivity.ARG_TITLE, "이미지 페이저");
+                intent.putExtra(ImagePagerActivity.ARG_POSITION, 0);
+                intent.putExtra(ImagePagerActivity.ARG_IS_SHOW_POSITION, true);
+                intent.putExtra(ImagePagerActivity.ARG_IS_SHOW_BOTTOM_VIEW, true);
                 intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) ImageDataList);
+                intent.putExtra(ImagePagerActivity.ARG_CLOSE_TYPE, ImagePagerActivity.CloseType.TYPE_BACK.getValue());
                 startActivity(intent);
             }
         });
