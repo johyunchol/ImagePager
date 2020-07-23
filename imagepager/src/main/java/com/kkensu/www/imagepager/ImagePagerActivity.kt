@@ -35,8 +35,6 @@ class ImagePagerActivity : AppCompatActivity() {
         const val ARG_IS_SHOW_BOTTOM_VIEW = "ARG_IS_SHOW_BOTTOM_VIEW"
     }
 
-    private var activity: AppCompatActivity? = null
-
     private var position = 0
     private var closeType: CloseType? = null
     private var toggleButtons: Array<ToggleButton?>? = null
@@ -49,12 +47,9 @@ class ImagePagerActivity : AppCompatActivity() {
 
     private var imageList: MutableList<ImageData>? = null
     private var thumbnailList: MutableList<ImageData>? = null
-    private var viewPager: ViewPager2? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity = this
         EventBus.getDefault().register(this)
         setContentView(R.layout.activity_viewpager)
 
@@ -97,8 +92,7 @@ class ImagePagerActivity : AppCompatActivity() {
         setTextPageNo(1)
         txtPosition.visibility = if (isShowPosition) View.VISIBLE else View.GONE
 
-        viewPager = findViewById<ViewPager2>(R.id.viewPager)
-        viewPager?.adapter = ImagePageAdapter(imageList!!)
+        viewPager?.adapter = ImagePageAdapter(this, imageList!!)
         viewPager?.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         viewPager?.currentItem = position
         viewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {
