@@ -1,21 +1,13 @@
 package com.kkensu.www.sample;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.View;
-import android.widget.Button;
-
-import com.gun0912.tedpermission.TedPermission;
-import com.kkensu.www.imagepager.ImagePagerActivity;
 import com.kkensu.www.imagepager.PhotoViewPager;
 import com.kkensu.www.imagepager.model.ImageData;
-import com.kkensu.www.imagepager.util.BundleBuilder;
-import com.kkensu.www.imagepager.util.Util;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
