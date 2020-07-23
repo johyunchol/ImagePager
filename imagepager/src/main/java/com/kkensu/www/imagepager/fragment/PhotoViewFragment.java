@@ -18,17 +18,14 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.kkensu.www.imagepager.R;
 import com.kkensu.www.imagepager.model.ImageInfo;
 
-import uk.co.senab.photoview.PhotoViewAttacher;
-
 public class PhotoViewFragment extends Fragment {
     private ImageInfo imageInfo;
-    private ImageView imageView;
+    private PhotoView imageView;
     private ProgressBar progressBar;
-
-    private PhotoViewAttacher mAttacher;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -83,32 +80,6 @@ public class PhotoViewFragment extends Fragment {
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         progressBar.setVisibility(View.GONE);
-                        if (mAttacher != null) {
-                            mAttacher.update();
-                        } else {
-                            mAttacher = new PhotoViewAttacher(imageView);
-                            mAttacher.update();
-
-                            mAttacher.setOnLongClickListener(new View.OnLongClickListener() {
-                                @Override
-                                public boolean onLongClick(View v) {
-//                                    EventBus.getDefault().post(new MoreButtonEvent());
-                                    return false;
-                                }
-                            });
-
-                            mAttacher.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
-                                @Override
-                                public void onPhotoTap(View view, float x, float y) {
-//                                    EventBus.getDefault().post(new ImageMenuLayoutShowHideEvent());
-                                }
-
-                                @Override
-                                public void onOutsidePhotoTap() {
-
-                                }
-                            });
-                        }
                         return false;
                     }
                 })

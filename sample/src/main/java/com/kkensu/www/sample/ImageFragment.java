@@ -17,6 +17,8 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.github.chrisbanes.photoview.OnPhotoTapListener;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.kkensu.www.imagepager.ImagePagerActivity;
 import com.kkensu.www.imagepager.R;
 import com.kkensu.www.imagepager.model.ImageInfo;
@@ -24,16 +26,12 @@ import com.kkensu.www.imagepager.model.ImageInfo;
 import java.io.Serializable;
 import java.util.List;
 
-import uk.co.senab.photoview.PhotoViewAttacher;
-
 public class ImageFragment extends Fragment {
     private List<ImageInfo> imageInfoList;
     private int position;
 
-    private ImageView imageView;
+    private PhotoView imageView;
     private ProgressBar progressBar;
-
-    private PhotoViewAttacher mAttacher;
 
     public ImageFragment() {
         // Required empty public constructor
@@ -66,6 +64,15 @@ public class ImageFragment extends Fragment {
         imageView = view.findViewById(R.id.imageContent);
         progressBar = view.findViewById(R.id.progressBar);
 
+        imageView.setOnPhotoTapListener(new OnPhotoTapListener() {
+            @Override
+            public void onPhotoTap(ImageView view, float x, float y) {
+                Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
+                intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageInfoList);
+                startActivity(intent);
+            }
+        });
+
         RequestOptions options = new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(this)
@@ -80,34 +87,6 @@ public class ImageFragment extends Fragment {
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, com.bumptech.glide.load.DataSource dataSource, boolean isFirstResource) {
                         progressBar.setVisibility(View.GONE);
-                        if (mAttacher != null) {
-                            mAttacher.update();
-                        } else {
-                            mAttacher = new PhotoViewAttacher(imageView);
-                            mAttacher.update();
-
-                            mAttacher.setOnLongClickListener(new View.OnLongClickListener() {
-                                @Override
-                                public boolean onLongClick(View v) {
-//                                    EventBus.getDefault().post(new MoreButtonEvent());
-                                    return false;
-                                }
-                            });
-
-                            mAttacher.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
-                                @Override
-                                public void onPhotoTap(View view, float x, float y) {
-                                    Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
-                                    intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageInfoList);
-                                    startActivity(intent);
-                                }
-
-                                @Override
-                                public void onOutsidePhotoTap() {
-
-                                }
-                            });
-                        }
                         return false;
                     }
                 })
