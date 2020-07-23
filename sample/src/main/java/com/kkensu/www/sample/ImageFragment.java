@@ -19,15 +19,15 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.kkensu.www.imagepager.ImagePager;
 import com.kkensu.www.imagepager.ImagePagerActivity;
 import com.kkensu.www.imagepager.R;
 import com.kkensu.www.imagepager.model.ImageData;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 public class ImageFragment extends Fragment {
-    private ArrayList<ImageData> ImageDataList;
+    private ArrayList<ImageData> imageList;
     private int position;
 
     private PhotoView imageView;
@@ -51,7 +51,7 @@ public class ImageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            ImageDataList = (ArrayList<ImageData>) getArguments().getSerializable("MAIN");
+            imageList = (ArrayList<ImageData>) getArguments().getSerializable("MAIN");
             position = getArguments().getInt("POSITION");
         }
     }
@@ -67,21 +67,19 @@ public class ImageFragment extends Fragment {
         imageView.setOnPhotoTapListener(new OnPhotoTapListener() {
             @Override
             public void onPhotoTap(ImageView view, float x, float y) {
-                Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
-                intent.putExtra(ImagePagerActivity.ARG_TITLE, "이미지 페이저");
-                intent.putExtra(ImagePagerActivity.ARG_POSITION, 0);
-                intent.putExtra(ImagePagerActivity.ARG_IS_SHOW_POSITION, true);
-                intent.putExtra(ImagePagerActivity.ARG_IS_SHOW_BOTTOM_VIEW, true);
-                intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) ImageDataList);
-                intent.putExtra(ImagePagerActivity.ARG_CLOSE_TYPE, ImagePagerActivity.CloseType.TYPE_BACK.getValue());
-                startActivity(intent);
+                ImagePager.with(getActivity())
+                        .setImageList(imageList)
+                        .setTitle("이미지 페이징")
+                        .setIsShowBottomView(true)
+                        .setIsShowPosition(true)
+                        .start();
             }
         });
 
         RequestOptions options = new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(this)
-                .load(ImageDataList.get(position).getImage())
+                .load(imageList.get(position).getImage())
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

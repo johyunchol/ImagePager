@@ -19,7 +19,9 @@ import kotlinx.android.synthetic.main.activity_viewpager.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.*
 import kotlin.math.roundToInt
+
 
 class ImagePagerActivity : AppCompatActivity() {
     companion object {
@@ -44,9 +46,11 @@ class ImagePagerActivity : AppCompatActivity() {
     private var isShowBottomView = false
 
     private var imageListAdapter: ImageListAdapter? = null
+
     private var imageList: MutableList<ImageData>? = null
     private var thumbnailList: MutableList<ImageData>? = null
     private var viewPager: ViewPager2? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,9 +105,11 @@ class ImagePagerActivity : AppCompatActivity() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
 
-                Handler().postDelayed({
-                    recyclerView.layoutManager!!.smoothScrollToPosition(recyclerView, RecyclerView.State(), (position * 2))
-                }, 200)
+                if (recyclerView.layoutManager != null) {
+                    Handler().postDelayed({
+                        recyclerView.layoutManager!!.smoothScrollToPosition(recyclerView, RecyclerView.State(), (position * 2))
+                    }, 200)
+                }
 
                 setTextPageNo(position + 1)
 

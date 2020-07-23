@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.gun0912.tedpermission.TedPermission;
 import com.kkensu.www.imagepager.ImagePagerActivity;
 import com.kkensu.www.imagepager.PhotoViewPager;
 import com.kkensu.www.imagepager.model.ImageData;
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initResources();
+
+//        TedPermission.with()
     }
 
     private void initResources() {
