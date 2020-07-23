@@ -1,39 +1,40 @@
 package com.kkensu.www.sample;
 
+import android.view.ViewGroup;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
-import android.view.ViewGroup;
 
-import com.kkensu.www.imagepager.model.ImageInfo;
+import com.kkensu.www.imagepager.model.ImageData;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by urchin on 07/09/16.
  */
 public class ImagePageAdapter extends FragmentStatePagerAdapter {
 
-    private List<ImageInfo> imageInfoList;
+    private ArrayList<ImageData> ImageDataList;
     private Fragment fragment;
     private int size;
 
-    public ImagePageAdapter(FragmentManager fm, List<ImageInfo> imageInfoList) {
+    public ImagePageAdapter(FragmentManager fm, ArrayList<ImageData> ImageDataList) {
         super(fm);
-        this.imageInfoList = imageInfoList;
-        this.size = imageInfoList.size();
+        this.ImageDataList = ImageDataList;
+        this.size = ImageDataList.size();
     }
 
     @Override
     public Fragment getItem(int position) {
-        fragment = new ImageFragment().newInstance(imageInfoList, position);
+        fragment = ImageFragment.newInstance(ImageDataList, position);
         return fragment;
     }
 
     @Override
     public int getCount() {
-        return imageInfoList.size();
+        return ImageDataList.size();
     }
 
     @Override

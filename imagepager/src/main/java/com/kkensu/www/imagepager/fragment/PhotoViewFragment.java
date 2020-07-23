@@ -20,10 +20,10 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.kkensu.www.imagepager.R;
-import com.kkensu.www.imagepager.model.ImageInfo;
+import com.kkensu.www.imagepager.model.ImageData;
 
 public class PhotoViewFragment extends Fragment {
-    private ImageInfo imageInfo;
+    private ImageData imageInfo;
     private PhotoView imageView;
     private ProgressBar progressBar;
 
@@ -42,7 +42,7 @@ public class PhotoViewFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static PhotoViewFragment newInstance(ImageInfo imageInfo) {
+    public static PhotoViewFragment newInstance(ImageData imageInfo) {
         PhotoViewFragment fragment = new PhotoViewFragment();
         Bundle args = new Bundle();
         args.putSerializable("MAIN", imageInfo);
@@ -54,7 +54,7 @@ public class PhotoViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            imageInfo = (ImageInfo) getArguments().getSerializable("MAIN");
+            imageInfo = (ImageData) getArguments().getSerializable("MAIN");
         }
     }
 
@@ -69,7 +69,7 @@ public class PhotoViewFragment extends Fragment {
         RequestOptions options = new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(this)
-                .load(imageInfo.getImgUrl())
+                .load(imageInfo.getImage())
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

@@ -21,13 +21,13 @@ import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.kkensu.www.imagepager.ImagePagerActivity;
 import com.kkensu.www.imagepager.R;
-import com.kkensu.www.imagepager.model.ImageInfo;
+import com.kkensu.www.imagepager.model.ImageData;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 
 public class ImageFragment extends Fragment {
-    private List<ImageInfo> imageInfoList;
+    private ArrayList<ImageData> ImageDataList;
     private int position;
 
     private PhotoView imageView;
@@ -38,10 +38,10 @@ public class ImageFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static ImageFragment newInstance(List<ImageInfo> imageInfoList, int position) {
+    public static ImageFragment newInstance(ArrayList<ImageData> ImageDataList, int position) {
         ImageFragment fragment = new ImageFragment();
         Bundle args = new Bundle();
-        args.putSerializable("MAIN", (Serializable) imageInfoList);
+        args.putSerializable("MAIN", ImageDataList);
         args.putInt("POSITION", position);
         fragment.setArguments(args);
         return fragment;
@@ -51,7 +51,7 @@ public class ImageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            imageInfoList = (List<ImageInfo>) getArguments().getSerializable("MAIN");
+            ImageDataList = (ArrayList<ImageData>) getArguments().getSerializable("MAIN");
             position = getArguments().getInt("POSITION");
         }
     }
@@ -68,7 +68,7 @@ public class ImageFragment extends Fragment {
             @Override
             public void onPhotoTap(ImageView view, float x, float y) {
                 Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
-                intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageInfoList);
+                intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) ImageDataList);
                 startActivity(intent);
             }
         });
@@ -76,7 +76,7 @@ public class ImageFragment extends Fragment {
         RequestOptions options = new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(this)
-                .load(imageInfoList.get(position).getImgUrl())
+                .load(ImageDataList.get(position).getImage())
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

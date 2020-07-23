@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.kkensu.www.imagepager.ImagePagerActivity"></activity>
+        <activity android:name="com.kkensu.www.imagepager.ImagePagerActivity2"></activity>
     </application>
 
 </manifest>
