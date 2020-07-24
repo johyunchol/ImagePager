@@ -22,8 +22,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.kkensu.www.imagepager.R;
 import com.kkensu.www.imagepager.event.PageEvent;
+import com.kkensu.www.imagepager.interfaces.OnSelectedItemCallback;
 import com.kkensu.www.imagepager.model.ImageData;
-import com.kkensu.www.imagepager.view.SquareImageView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -51,6 +51,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private LayoutInflater inflater;
     private Context context;
     private List<ImageData> list;
+    private OnSelectedItemCallback onSelectedItemCallback;
 
     private SimpleDateFormat dateformat;
     private SimpleDateFormat cardformat;
@@ -60,6 +61,10 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         dateformat = new SimpleDateFormat("yyyy-mm-dd");
         cardformat = new SimpleDateFormat("mm/yy");
+    }
+
+    public void setOnSelectedItemCallback(OnSelectedItemCallback onSelectedItemCallback) {
+        this.onSelectedItemCallback = onSelectedItemCallback;
     }
 
     public void setItem(List<ImageData> list) {
@@ -131,7 +136,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     class ImageViewHolder extends RecyclerView.ViewHolder {
 
         View v;
-        SquareImageView imageView;
+        ImageView imageView;
         ImageView imgSelected;
 
         public ImageViewHolder(@NonNull View v) {
@@ -180,7 +185,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 public void onClick(View v) {
                     allUnSelect();
                     item.setSelected(true);
-                    EventBus.getDefault().post(new PageEvent(item));
+//                    EventBus.getDefault().post(new PageEvent(item));
+                    onSelectedItemCallback.onSelectedItem(item);
 
                     notifyDataSetChanged();
                 }

@@ -3,6 +3,7 @@ package com.kkensu.www.imagepager
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.ToggleButton
@@ -14,6 +15,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.kkensu.www.imagepager.adapter.ImageListAdapter
 import com.kkensu.www.imagepager.adapter.ImagePageAdapter
 import com.kkensu.www.imagepager.event.PageEvent
+import com.kkensu.www.imagepager.interfaces.OnSelectedItemCallback
 import com.kkensu.www.imagepager.model.ImageData
 import kotlinx.android.synthetic.main.activity_viewpager.*
 import org.greenrobot.eventbus.EventBus
@@ -117,6 +119,10 @@ class ImagePagerActivity : AppCompatActivity() {
             recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
             imageListAdapter = ImageListAdapter(this)
             imageListAdapter?.setItem(imageList)
+            imageListAdapter?.setOnSelectedItemCallback {
+                viewPager?.currentItem = it.idx!! - 1
+                Log.e("JHC_DEBUG", "test : " + it.idx)
+            }
             recyclerView.adapter = imageListAdapter
             recyclerView.visibility = View.VISIBLE
         } else {
@@ -181,17 +187,6 @@ class ImagePagerActivity : AppCompatActivity() {
                     return state
                 }
                 return TYPE_BACK
-            }
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun setViewPager(event: PageEvent) {
-        for (i in imageList?.indices!!) {
-            val imageData: ImageData = imageList?.get(i)!!
-            if (imageData.image?.equals(event.imageData.image)!!) {
-                viewPager!!.currentItem = i
-                break
             }
         }
     }

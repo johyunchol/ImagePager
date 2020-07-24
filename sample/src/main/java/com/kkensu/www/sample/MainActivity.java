@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ImagePager.with(MainActivity.this)
-                        .setImageList(imageList)
+                        .setImageList("http://img.hani.co.kr/imgdb/resize/2018/0328/00500164_20180328.JPG", "http://img.hani.co.kr/imgdb/resize/2018/0328/00500164_20180328.JPG", "http://img.hani.co.kr/imgdb/resize/2018/0328/00500164_20180328.JPG")
                         .setTitle("이미지 페이징")
                         .setIsShowBottomView(true)
                         .setIsShowPosition(true)

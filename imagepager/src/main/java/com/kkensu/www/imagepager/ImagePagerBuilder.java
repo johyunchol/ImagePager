@@ -10,13 +10,14 @@ import com.kkensu.www.imagepager.model.ImageData;
 import com.kkensu.www.imagepager.util.ObjectUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ImagePagerBuilder<T extends ImagePagerBuilder> {
 
     private Context context;
 
-    private List<ImageData> imageList;
+    private List<ImageData> imageList = new ArrayList<>();
 
     private CharSequence title;
     private int position;
@@ -57,6 +58,16 @@ public abstract class ImagePagerBuilder<T extends ImagePagerBuilder> {
 
     public T setImageList(List<ImageData> imageList) {
         this.imageList = imageList;
+        return (T) this;
+    }
+
+    public T setImageList(Object... imageList) {
+        for (int i = 0; i < imageList.length; i++) {
+            ImageData imageData = new ImageData();
+            imageData.setIdx(i + 1);
+            imageData.setImage(imageList[i]);
+            this.imageList.add(imageData);
+        }
         return (T) this;
     }
 
