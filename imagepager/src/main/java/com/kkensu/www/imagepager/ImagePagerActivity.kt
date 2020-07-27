@@ -52,16 +52,10 @@ class ImagePagerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        EventBus.getDefault().register(this)
         setContentView(R.layout.activity_viewpager)
 
         initData()
         initResources()
-    }
-
-    override fun onDestroy() {
-        EventBus.getDefault().unregister(this)
-        super.onDestroy()
     }
 
     private fun initData() {
@@ -91,12 +85,11 @@ class ImagePagerActivity : AppCompatActivity() {
         setToggleButton(imageList!!.size)
 
         txtTitle.text = title
-        setTextPageNo(1)
+        setTextPageNo(position)
         txtPosition.visibility = if (isShowPosition) View.VISIBLE else View.GONE
 
         viewPager?.adapter = ImagePageAdapter(this, imageList!!)
         viewPager?.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        viewPager?.currentItem = position
         viewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -114,6 +107,7 @@ class ImagePagerActivity : AppCompatActivity() {
                 imageListAdapter?.setItem(imageList)
             }
         })
+        viewPager?.currentItem = position
 
         if (isShowBottomView) {
             recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -139,7 +133,7 @@ class ImagePagerActivity : AppCompatActivity() {
     }
 
     private fun setTextPageNo(curNo: Int) {
-        txtPosition.text = String.format("%d / %d", curNo, imageList?.size)
+        txtPosition.text = String.format("%d / %d", (curNo + 1), imageList?.size)
     }
 
     private fun initClose() {

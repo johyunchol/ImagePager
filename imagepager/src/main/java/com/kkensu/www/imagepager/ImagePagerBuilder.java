@@ -56,8 +56,13 @@ public abstract class ImagePagerBuilder<T extends ImagePagerBuilder> {
 //        TedPermissionBase.setFirstRequest(context,permissions);
     }
 
-    public T setImageList(List<ImageData> imageList) {
-        this.imageList = imageList;
+    public T setImageList(List<Object> imageList) {
+        for (int i = 0; i < imageList.size(); i++) {
+            ImageData imageData = new ImageData();
+            imageData.setIdx(i + 1);
+            imageData.setImage(imageList.get(i));
+            this.imageList.add(imageData);
+        }
         return (T) this;
     }
 
@@ -88,17 +93,17 @@ public abstract class ImagePagerBuilder<T extends ImagePagerBuilder> {
         return (T) this;
     }
 
-    public T setPosition(int position) {
+    public T setFirstVisiblePosition(int position) {
         this.position = position;
         return (T) this;
     }
 
-    public T setIsShowPosition(boolean isShowPosition) {
+    public T setShowPageNumber(boolean isShowPosition) {
         this.isShowPosition = isShowPosition;
         return (T) this;
     }
 
-    public T setIsShowBottomView(boolean isShowBottomView) {
+    public T setShowBottomImageViews(boolean isShowBottomView) {
         this.isShowBottomView = isShowBottomView;
         return (T) this;
     }
