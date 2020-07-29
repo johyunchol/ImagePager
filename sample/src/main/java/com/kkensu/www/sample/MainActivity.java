@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 ImagePager.with(MainActivity.this)
                         .setImageList(imageList)
                         .setTitle("이미지 페이징")
-                        .setFirstVisiblePosition(1)
                         .setShowBottomImageViews(true)
                         .setShowPageNumber(true)
                         .start();

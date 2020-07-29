@@ -2,10 +2,7 @@ package com.kkensu.www.imagepager
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,15 +11,9 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.kkensu.www.imagepager.adapter.ImageListAdapter
 import com.kkensu.www.imagepager.adapter.ImagePageAdapter
-import com.kkensu.www.imagepager.event.PageEvent
-import com.kkensu.www.imagepager.interfaces.OnSelectedItemCallback
 import com.kkensu.www.imagepager.model.ImageData
 import kotlinx.android.synthetic.main.activity_viewpager.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import java.util.*
-import kotlin.math.roundToInt
 
 
 class ImagePagerActivity : AppCompatActivity() {
@@ -77,17 +68,37 @@ class ImagePagerActivity : AppCompatActivity() {
 
     private fun initResources() {
         initClose()
+        initTitle()
+        initPageNumber()
+        initViewPager()
+        initBottomView()
+    }
 
-        btnClose.setOnClickListener {
-            finish()
-        }
-
-        setToggleButton(imageList!!.size)
-
+    private fun initTitle() {
         txtTitle.text = title
-        setTextPageNo(position)
-        txtPosition.visibility = if (isShowPosition) View.VISIBLE else View.GONE
+    }
 
+    private fun initPageNumber() {
+        txtPosition.visibility = if (isShowPosition) View.VISIBLE else View.GONE
+        updatePageNumber(position)
+    }
+
+    private fun initBottomView() {
+        if (isShowBottomView) {
+            recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            imageListAdapter = ImageListAdapter(this)
+            imageListAdapter?.setItem(imageList)
+            imageListAdapter?.setOnSelectedItemCallback {
+                viewPager?.currentItem = it.idx!! - 1
+            }
+            recyclerView.adapter = imageListAdapter
+            recyclerView.visibility = View.VISIBLE
+        } else {
+            recyclerView.visibility = View.GONE
+        }
+    }
+
+    private fun initViewPager() {
         viewPager?.adapter = ImagePageAdapter(this, imageList!!)
         viewPager?.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         viewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {
@@ -100,7 +111,7 @@ class ImagePagerActivity : AppCompatActivity() {
                     }, 200)
                 }
 
-                setTextPageNo(position + 1)
+                updatePageNumber(position)
 
                 allUnSelect()
                 imageList?.get(position)?.isSelected = true
@@ -108,22 +119,6 @@ class ImagePagerActivity : AppCompatActivity() {
             }
         })
         viewPager?.currentItem = position
-
-        if (isShowBottomView) {
-            recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-            imageListAdapter = ImageListAdapter(this)
-            imageListAdapter?.setItem(imageList)
-            imageListAdapter?.setOnSelectedItemCallback {
-                viewPager?.currentItem = it.idx!! - 1
-                Log.e("JHC_DEBUG", "test : " + it.idx)
-            }
-            recyclerView.adapter = imageListAdapter
-            recyclerView.visibility = View.VISIBLE
-        } else {
-            recyclerView.visibility = View.GONE
-        }
-
-        recyclerView.visibility = if (isShowBottomView) View.VISIBLE else View.GONE
     }
 
     private fun allUnSelect() {
@@ -132,7 +127,7 @@ class ImagePagerActivity : AppCompatActivity() {
         }
     }
 
-    private fun setTextPageNo(curNo: Int) {
+    private fun updatePageNumber(curNo: Int) {
         txtPosition.text = String.format("%d / %d", (curNo + 1), imageList?.size)
     }
 
@@ -141,33 +136,8 @@ class ImagePagerActivity : AppCompatActivity() {
             CloseType.TYPE_BACK -> btnClose.setImageResource(R.drawable.ic_back_black)
             CloseType.TYPE_CLOSE -> btnClose.setImageResource(R.drawable.ic_nav_close_black)
         }
-    }
 
-    // view pager ToggleButton 을 동적으로 생성해준다.
-    private fun setToggleButton(viewPagerNum: Int) {
-        val viewGroup: LinearLayout = findViewById<View>(R.id.layoutCircle) as LinearLayout
-
-        // LayoutParams 객체 생성 및 값 설정
-        val dm: DisplayMetrics = resources.displayMetrics
-        val size: Int = (8 * dm.density).roundToInt() // size = 10dp
-        val marginSize: Int = (2 * dm.density).roundToInt() // marginSize = 2dp
-        val btnLayoutLp: LinearLayout.LayoutParams = LinearLayout.LayoutParams(size, size) // layout_width = "10dp", layout_height = "10dp"
-        btnLayoutLp.setMargins(marginSize, marginSize, marginSize, marginSize) // layout_margin = "2dp"
-        toggleButtons = arrayOfNulls<ToggleButton>(viewPagerNum)
-
-        for (i in 0 until viewPagerNum) {
-            toggleButtons!![i] = ToggleButton(this)
-            toggleButtons!![i]?.setBackgroundResource(R.drawable.common_btn_circle)
-            toggleButtons!![i]?.isEnabled = false
-            // Toggle 버튼 텍스트 삭제
-            toggleButtons!![i]?.textOff = ""
-            toggleButtons!![i]?.textOn = ""
-            toggleButtons!![i]?.text = ""
-            viewGroup.addView(toggleButtons!![i], btnLayoutLp)
-        }
-        if (viewPagerNum > 0) {
-            toggleButtons!![0]?.isChecked = true
-        }
+        btnClose.setOnClickListener { finish() }
     }
 
     enum class CloseType(var value: Int) {

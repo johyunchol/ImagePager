@@ -18,18 +18,16 @@ public abstract class ImagePagerBuilder<T extends ImagePagerBuilder> {
     private Context context;
 
     private List<ImageData> imageList = new ArrayList<>();
+    private List<ImageData> thumbnailImageList = new ArrayList<>();
 
     private CharSequence title;
-    private int position;
-    private boolean isShowPosition;
-    private boolean isShowBottomView;
-    private ImagePagerActivity.CloseType closeType;
+    private int position = 0;
+    private boolean isShowPosition = false;
+    private boolean isShowBottomView = false;
+    private ImagePagerActivity.CloseType closeType = ImagePagerActivity.CloseType.TYPE_BACK;
 
     public ImagePagerBuilder(Context context) {
         this.context = context;
-//        deniedCloseButtonText = context.getString(R.string.tedpermission_close);
-//        rationaleConfirmText = context.getString(R.string.tedpermission_confirm);
-//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
     }
 
     protected void startImagePager() {
@@ -52,8 +50,6 @@ public abstract class ImagePagerBuilder<T extends ImagePagerBuilder> {
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
 
         context.startActivity(intent);
-//        ImagePagerActivity.startActivity(context, intent);
-//        TedPermissionBase.setFirstRequest(context,permissions);
     }
 
     public T setImageList(List<Object> imageList) {
@@ -72,6 +68,26 @@ public abstract class ImagePagerBuilder<T extends ImagePagerBuilder> {
             imageData.setIdx(i + 1);
             imageData.setImage(imageList[i]);
             this.imageList.add(imageData);
+        }
+        return (T) this;
+    }
+
+    public T setThumbnailImageList(List<Object> imageList) {
+        for (int i = 0; i < imageList.size(); i++) {
+            ImageData imageData = new ImageData();
+            imageData.setIdx(i + 1);
+            imageData.setImage(imageList.get(i));
+            this.thumbnailImageList.add(imageData);
+        }
+        return (T) this;
+    }
+
+    public T setThumbnailImageList(Object... imageList) {
+        for (int i = 0; i < imageList.length; i++) {
+            ImageData imageData = new ImageData();
+            imageData.setIdx(i + 1);
+            imageData.setImage(imageList[i]);
+            this.thumbnailImageList.add(imageData);
         }
         return (T) this;
     }
