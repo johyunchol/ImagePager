@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/btnSave"
+        android:id="@+id/btn_image_save"
         android:title="사진저장"/>
 
 </menu>

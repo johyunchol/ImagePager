@@ -175,9 +175,9 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .into(imageView);
 
             if (item.isSelected()) {
-                imgSelected.setVisibility(View.VISIBLE);
+                imgSelected.setBackgroundResource(R.drawable.bg_transparent_rect_border_white_1dp);
             } else {
-                imgSelected.setVisibility(View.GONE);
+                imgSelected.setBackgroundResource(R.drawable.bg_transparent_rect_border_gray_1dp);
             }
 
             v.setOnClickListener(new View.OnClickListener() {

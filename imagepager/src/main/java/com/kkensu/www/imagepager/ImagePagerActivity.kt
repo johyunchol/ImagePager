@@ -1,17 +1,27 @@
 package com.kkensu.www.imagepager
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
+import android.view.MenuItem
 import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.widget.PopupMenu
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.kkensu.www.imagepager.adapter.ImageListAdapter
 import com.kkensu.www.imagepager.adapter.ImagePageAdapter
+import com.kkensu.www.imagepager.interfaces.OnSelectedImageCallback
 import com.kkensu.www.imagepager.model.ImageData
+import com.kkensu.www.imagepager.util.DownloadUtil
 import kotlinx.android.synthetic.main.activity_viewpager.*
 import java.util.*
 
@@ -99,7 +109,18 @@ class ImagePagerActivity : AppCompatActivity() {
     }
 
     private fun initViewPager() {
-        viewPager?.adapter = ImagePageAdapter(this, imageList!!)
+        viewPager?.adapter =
+                ImagePageAdapter(
+                        this,
+                        imageList!!,
+                        OnSelectedImageCallback {
+                            showHideMenuLayout()
+                        },
+                        View.OnLongClickListener {
+                            popupMenu()
+                            return@OnLongClickListener false
+                        }
+                )
         viewPager?.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         viewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -125,6 +146,44 @@ class ImagePagerActivity : AppCompatActivity() {
         for (image in this.imageList!!) {
             image.isSelected = false
         }
+    }
+
+    fun showHideMenuLayout() {
+        if (layout_top.visibility == View.GONE) {
+            val showAnim: Animation = AlphaAnimation(0f, 1f)
+            showAnim.duration = 500
+            layout_top.visibility = View.VISIBLE
+            layout_top.animation = showAnim
+
+            if (isShowBottomView) {
+                recyclerView.visibility = View.VISIBLE
+                recyclerView.animation = showAnim
+            }
+        } else {
+            val hideAnim: Animation = AlphaAnimation(1f, 0f)
+            hideAnim.duration = 500
+            layout_top.visibility = View.GONE
+            layout_top.animation = hideAnim
+
+            if (isShowBottomView) {
+                recyclerView.visibility = View.GONE
+                recyclerView.animation = hideAnim
+            }
+        }
+    }
+
+    private fun popupMenu() {
+        val popupMenu = PopupMenu(this, btnMore)
+        menuInflater.inflate(R.menu.imageview_more_menu, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item?.itemId) {
+                R.id.btn_image_save -> {
+                    DownloadUtil.downloadData(this, imageList?.get(viewPager.currentItem)?.image as String?)
+                }
+            }
+            false
+        }
+        popupMenu.show()
     }
 
     private fun updatePageNumber(curNo: Int) {

@@ -2,6 +2,7 @@ package com.kkensu.www.imagepager.adapter
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,15 +17,21 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.github.chrisbanes.photoview.PhotoView
 import com.kkensu.www.imagepager.R
+import com.kkensu.www.imagepager.interfaces.OnSelectedImageCallback
 import com.kkensu.www.imagepager.model.ImageData
 
-class ImagePageAdapter(private val context: Context, private val imageList: MutableList<ImageData>) : RecyclerView.Adapter<PagerViewHolder>() {
-
+class ImagePageAdapter(
+        private val context: Context,
+        private val imageList: MutableList<ImageData>,
+        private val onSelectedImageCallback: OnSelectedImageCallback,
+        private val onLongClickListener: View.OnLongClickListener)
+    : RecyclerView.Adapter<PagerViewHolder>() {
+    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder =
             PagerViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.activity_imageview, parent, false))
 
     override fun onBindViewHolder(holder: PagerViewHolder, position: Int) {
-        holder.bind(context, imageList[position], position)
+        holder.bind(context, imageList[position], position, onSelectedImageCallback, onLongClickListener)
     }
 
     override fun getItemCount(): Int = imageList.size
@@ -34,12 +41,12 @@ class PagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val imageContent: PhotoView = itemView.findViewById(R.id.imageContent)
     private val progressBar: ProgressBar = itemView.findViewById(R.id.progressBar)
 
-    fun bind(context: Context, imageInfo: ImageData, position: Int) {
+    fun bind(context: Context, imageData: ImageData, position: Int, onSelectedImageCallback: OnSelectedImageCallback, onLongClickListener: View.OnLongClickListener) {
         val options = RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
 
         Glide.with(context)
-                .load(imageInfo.image)
+                .load(imageData.image)
                 .listener(object : RequestListener<Drawable?> {
                     override fun onLoadFailed(e: GlideException?, model: Any, target: Target<Drawable?>, isFirstResource: Boolean): Boolean {
                         progressBar.visibility = View.GONE
@@ -53,5 +60,10 @@ class PagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 })
                 .apply(options)
                 .into(imageContent)
+
+        imageContent.setOnClickListener(View.OnClickListener {
+            onSelectedImageCallback.onSelectedImage(imageData)
+        })
+        imageContent.setOnLongClickListener(onLongClickListener)
     }
 }
