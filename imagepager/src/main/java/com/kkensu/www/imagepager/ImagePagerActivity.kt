@@ -63,6 +63,10 @@ class ImagePagerActivity : AppCompatActivity() {
         imageList = intent.getSerializableExtra(ARG_IMAGE_LIST) as ArrayList<ImageData>
         try {
             thumbnailList = intent.getSerializableExtra(ARG_THUMBNAIL_LIST) as ArrayList<ImageData>
+
+            if (thumbnailList?.size == 0) {
+                thumbnailList = imageList
+            }
         } catch (e: Exception) {
             if (thumbnailList == null || thumbnailList?.size == 0) {
                 thumbnailList = imageList
@@ -97,7 +101,7 @@ class ImagePagerActivity : AppCompatActivity() {
         if (isShowBottomView) {
             recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
             imageListAdapter = ImageListAdapter(this)
-            imageListAdapter?.setItem(imageList)
+            imageListAdapter?.setItem(thumbnailList)
             imageListAdapter?.setOnSelectedItemCallback {
                 viewPager?.currentItem = it.idx!! - 1
             }
@@ -135,15 +139,15 @@ class ImagePagerActivity : AppCompatActivity() {
                 updatePageNumber(position)
 
                 allUnSelect()
-                imageList?.get(position)?.isSelected = true
-                imageListAdapter?.setItem(imageList)
+                thumbnailList?.get(position)?.isSelected = true
+                imageListAdapter?.setItem(thumbnailList)
             }
         })
         viewPager?.currentItem = position
     }
 
     private fun allUnSelect() {
-        for (image in this.imageList!!) {
+        for (image in this.thumbnailList!!) {
             image.isSelected = false
         }
     }

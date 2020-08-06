@@ -154,6 +154,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             Glide.with(context)
                     .load(item.getImage())
                     .thumbnail(0.2f)
+                    .override(200)
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
