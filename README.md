@@ -6,6 +6,11 @@
 
 ImagePager는 ViewPager2를 이용한 이미지 페이징 효과를 주기 위한 라이브러리 입니다.
 
+### Demo
+
+<img src="https://github.com/johyunchol/ImagePager/blob/master/assets/sample_video_01.gif?raw=true" width="40%">
+
+
 ## Quick Setup
 
 ###  Gradle
