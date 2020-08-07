@@ -4,7 +4,7 @@
 
 [![ref](https://img.shields.io/static/v1.svg?label=AndroidStudio&message=4.0&color=blueviolet)](https://developer.android.com/studio) [![ref](https://img.shields.io/badge/platform-android-lightgrey.svg)](https://developer.android.com/) [![ref](https://img.shields.io/badge/Kotlin-1.3.72-orange.svg)](https://kotlinlang.org/) [![ref](https://img.shields.io/badge/gradle--wrapper-gradle--6.1.1--all-yellowgreen.svg)](https://gradle.org/) [![ref](https://img.shields.io/badge/gradle-4.0.0-blue.svg)](https://gradle.org/) [![ref](https://travis-ci.org/perelandrax/ReactorKit.svg?branch=master)](https://travis-ci.org/johyunchol/ImagePager) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-ImagePager is ...
+ImagePager는 ViewPager2를 이용한 이미지 페이징 효과를 주기 위한 라이브러리 입니다.
 
 ## Quick Setup
 
