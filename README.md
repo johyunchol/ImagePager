@@ -37,13 +37,10 @@ dependencies {
 ```
 ImagePager.with(MainActivity.this)
         .setTitle(R.string.app_name)
-        .setIsShowBottomView(true)
-        .setIsShowPosition(true)
-        .setImageList(list)
+        .setShowBottomImageViews(true)
+        .setShowPageNumber(true)
+        .setImageList(imageList)
+        .setThumbnailList(thumbnailList)
+        .setCloseType(ImagePagerActivity.CloseType.TYPE_CLOSE)
         .start();
 ```
-
-## Customize
-
-- You can customize what you want
-
