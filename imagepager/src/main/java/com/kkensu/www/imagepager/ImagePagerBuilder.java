@@ -39,8 +39,9 @@ public abstract class ImagePagerBuilder<T extends ImagePagerBuilder> {
 
         Intent intent = new Intent(context, ImagePagerActivity.class);
         intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageList);
-        intent.putExtra(ImagePagerActivity.ARG_THUMBNAIL_LIST, (Serializable) thumbnailList);
-
+        if (thumbnailList != null) {
+            intent.putExtra(ImagePagerActivity.ARG_THUMBNAIL_LIST, (Serializable) thumbnailList);
+        }
         intent.putExtra(ImagePagerActivity.ARG_TITLE, title);
         intent.putExtra(ImagePagerActivity.ARG_POSITION, position);
         intent.putExtra(ImagePagerActivity.ARG_IS_SHOW_POSITION, isShowPosition);
