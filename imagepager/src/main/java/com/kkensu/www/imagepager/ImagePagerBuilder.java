@@ -56,20 +56,24 @@ public abstract class ImagePagerBuilder<T extends ImagePagerBuilder> {
 
     public T setImageList(List<Object> imageList) {
         for (int i = 0; i < imageList.size(); i++) {
-            ImageData imageData = new ImageData();
-            imageData.setIdx(i + 1);
-            imageData.setImage(imageList.get(i));
-            this.imageList.add(imageData);
+            if (imageList.get(i) != null) {
+                ImageData imageData = new ImageData();
+                imageData.setIdx(this.imageList.size() + 1);
+                imageData.setImage(imageList.get(i));
+                this.imageList.add(imageData);
+            }
         }
         return (T) this;
     }
 
     public T setImageList(Object... imageList) {
         for (int i = 0; i < imageList.length; i++) {
-            ImageData imageData = new ImageData();
-            imageData.setIdx(i + 1);
-            imageData.setImage(imageList[i]);
-            this.imageList.add(imageData);
+            if (imageList[i] != null) {
+                ImageData imageData = new ImageData();
+                imageData.setIdx(this.imageList.size() + 1);
+                imageData.setImage(imageList[i]);
+                this.imageList.add(imageData);
+            }
         }
         return (T) this;
     }
