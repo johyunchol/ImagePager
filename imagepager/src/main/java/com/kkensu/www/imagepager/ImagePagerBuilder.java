@@ -3,6 +3,7 @@ package com.kkensu.www.imagepager;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.StringRes;
 
@@ -31,15 +32,14 @@ public abstract class ImagePagerBuilder<T extends ImagePagerBuilder> {
     }
 
     protected void startImagePager() {
-        if (imageList == null) {
-            throw new IllegalArgumentException("You must setImageList() on ImagePager");
-        } else if (ObjectUtils.isEmpty(imageList)) {
-            throw new IllegalArgumentException("You must setPermissions() on ImagePager");
+        if (imageList.size() <= 0) {
+            Log.e("ImagePagerBuilder", "imageList size is 0");
+            return;
         }
 
         Intent intent = new Intent(context, ImagePagerActivity.class);
         intent.putExtra(ImagePagerActivity.ARG_IMAGE_LIST, (Serializable) imageList);
-        if (thumbnailList != null) {
+        if (thumbnailList.size() > 0) {
             intent.putExtra(ImagePagerActivity.ARG_THUMBNAIL_LIST, (Serializable) thumbnailList);
         }
         intent.putExtra(ImagePagerActivity.ARG_TITLE, title);
