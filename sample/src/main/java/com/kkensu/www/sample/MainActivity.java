@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initImageList()
+    private void initImageList() {
         setImage("http://img.hani.co.kr/imgdb/resize/2018/0328/00500164_20180328.JPG");
         setImage("http://pds.joins.com//news/component/htmlphoto_mmdata/201710/09/c04f1f6e-8bae-4e74-8e76-b76ab877b29b.jpg");
         setImage(R.drawable.ic_launcher_foreground);
