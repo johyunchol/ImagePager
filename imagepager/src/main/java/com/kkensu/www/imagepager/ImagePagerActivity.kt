@@ -13,16 +13,17 @@ import android.widget.PopupMenu
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.kkensu.www.imagepager.adapter.ImageListAdapter
 import com.kkensu.www.imagepager.adapter.ImagePageAdapter
+import com.kkensu.www.imagepager.databinding.ActivityViewpagerBinding
 import com.kkensu.www.imagepager.interfaces.OnSelectedImageCallback
 import com.kkensu.www.imagepager.model.ImageData
 import com.kkensu.www.imagepager.util.DownloadUtil
-import kotlinx.android.synthetic.main.activity_viewpager.*
 import java.util.*
 
 
@@ -37,6 +38,8 @@ class ImagePagerActivity : AppCompatActivity() {
         const val ARG_IS_SHOW_POSITION = "ARG_IS_SHOW_POSITION"
         const val ARG_IS_SHOW_BOTTOM_VIEW = "ARG_IS_SHOW_BOTTOM_VIEW"
     }
+
+    private val binding : ActivityViewpagerBinding by lazy { DataBindingUtil.setContentView(this, R.layout.activity_viewpager) }
 
     private var position = 0
     private var closeType: CloseType? = null
@@ -53,7 +56,6 @@ class ImagePagerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_viewpager)
 
         initData()
         initResources()
@@ -89,31 +91,31 @@ class ImagePagerActivity : AppCompatActivity() {
     }
 
     private fun initTitle() {
-        txtTitle.text = title
+        binding.txtTitle.text = title
     }
 
     private fun initPageNumber() {
-        txtPosition.visibility = if (isShowPosition) View.VISIBLE else View.GONE
+        binding.txtPosition.visibility = if (isShowPosition) View.VISIBLE else View.GONE
         updatePageNumber(position)
     }
 
     private fun initBottomView() {
         if (isShowBottomView) {
-            recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
             imageListAdapter = ImageListAdapter(this)
             imageListAdapter?.setItem(thumbnailList)
             imageListAdapter?.setOnSelectedItemCallback {
-                viewPager?.currentItem = it.idx!! - 1
+                binding.viewPager?.currentItem = it.idx!! - 1
             }
-            recyclerView.adapter = imageListAdapter
-            recyclerView.visibility = View.VISIBLE
+            binding.recyclerView.adapter = imageListAdapter
+            binding.recyclerView.visibility = View.VISIBLE
         } else {
-            recyclerView.visibility = View.GONE
+            binding.recyclerView.visibility = View.GONE
         }
     }
 
     private fun initViewPager() {
-        viewPager?.adapter =
+        binding.viewPager?.adapter =
                 ImagePageAdapter(
                         this,
                         imageList!!,
@@ -125,14 +127,14 @@ class ImagePagerActivity : AppCompatActivity() {
                             return@OnLongClickListener false
                         }
                 )
-        viewPager?.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        viewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+        binding.viewPager?.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        binding.viewPager?.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
 
-                if (recyclerView.layoutManager != null) {
+                if (binding.recyclerView.layoutManager != null) {
                     Handler().postDelayed({
-                        recyclerView.layoutManager!!.smoothScrollToPosition(recyclerView, RecyclerView.State(), (position * 2))
+                        binding.recyclerView.layoutManager!!.smoothScrollToPosition(binding.recyclerView, RecyclerView.State(), (position * 2))
                     }, 200)
                 }
 
@@ -143,7 +145,7 @@ class ImagePagerActivity : AppCompatActivity() {
                 imageListAdapter?.setItem(thumbnailList)
             }
         })
-        viewPager?.currentItem = position
+        binding.viewPager?.currentItem = position
     }
 
     private fun allUnSelect() {
@@ -153,36 +155,36 @@ class ImagePagerActivity : AppCompatActivity() {
     }
 
     fun showHideMenuLayout() {
-        if (layout_top.visibility == View.GONE) {
+        if (binding.layoutTop.visibility == View.GONE) {
             val showAnim: Animation = AlphaAnimation(0f, 1f)
             showAnim.duration = 500
-            layout_top.visibility = View.VISIBLE
-            layout_top.animation = showAnim
+            binding.layoutTop.visibility = View.VISIBLE
+            binding.layoutTop.animation = showAnim
 
             if (isShowBottomView) {
-                recyclerView.visibility = View.VISIBLE
-                recyclerView.animation = showAnim
+                binding.recyclerView.visibility = View.VISIBLE
+                binding.recyclerView.animation = showAnim
             }
         } else {
             val hideAnim: Animation = AlphaAnimation(1f, 0f)
             hideAnim.duration = 500
-            layout_top.visibility = View.GONE
-            layout_top.animation = hideAnim
+            binding.layoutTop.visibility = View.GONE
+            binding.layoutTop.animation = hideAnim
 
             if (isShowBottomView) {
-                recyclerView.visibility = View.GONE
-                recyclerView.animation = hideAnim
+                binding.recyclerView.visibility = View.GONE
+                binding.recyclerView.animation = hideAnim
             }
         }
     }
 
     private fun popupMenu() {
-        val popupMenu = PopupMenu(this, btnMore)
+        val popupMenu = PopupMenu(this, binding.btnMore)
         menuInflater.inflate(R.menu.imageview_more_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item?.itemId) {
                 R.id.btn_image_save -> {
-                    DownloadUtil.downloadData(this, imageList?.get(viewPager.currentItem)?.image as String?)
+                    DownloadUtil.downloadData(this, imageList?.get(binding.viewPager.currentItem)?.image as String?)
                 }
             }
             false
@@ -191,16 +193,16 @@ class ImagePagerActivity : AppCompatActivity() {
     }
 
     private fun updatePageNumber(curNo: Int) {
-        txtPosition.text = String.format("%d / %d", (curNo + 1), imageList?.size)
+        binding.txtPosition.text = String.format("%d / %d", (curNo + 1), imageList?.size)
     }
 
     private fun initClose() {
         when (closeType) {
-            CloseType.TYPE_BACK -> btnClose.setImageResource(R.drawable.ic_back_black)
-            CloseType.TYPE_CLOSE -> btnClose.setImageResource(R.drawable.ic_nav_close_black)
+            CloseType.TYPE_BACK -> binding.btnClose.setImageResource(R.drawable.ic_back_black)
+            CloseType.TYPE_CLOSE -> binding.btnClose.setImageResource(R.drawable.ic_nav_close_black)
         }
 
-        btnClose.setOnClickListener { finish() }
+        binding.btnClose.setOnClickListener { finish() }
     }
 
     enum class CloseType(var value: Int) {
